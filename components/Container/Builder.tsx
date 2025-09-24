@@ -1,3 +1,5 @@
+"use client";
+
 import { BuilderBlockComponent, withChildren } from "@builder.io/react";
 import { BuilderElement, type Component } from "@builder.io/sdk";
 
@@ -8,35 +10,44 @@ interface BuilderContainerProps extends ContainerProps {
 	builderBlock?: BuilderElement;
 }
 
+
+
+console.log("where is console log")
 export const builderContainer = withChildren(
 	({
 		containment,
 		className,
-		builderBlock,
-		...otherProps
-	}: BuilderContainerProps) => {
-		console.table(builderBlock);
-        console.log("OTHER PROPS ARE ", otherProps)
+		attributes,
+		children,
+		builderBlock, 
+	}: {
+		containment?: ContainerContainment;
+		className?: string;
+		attributes?: React.HTMLAttributes<HTMLDivElement>;
+		children?: React.ReactNode;
+		builderBlock?: import('@builder.io/sdk').BuilderElement;
+	}) => {
 		return (
-			<BaseContainer
-				containment={containment}
-				className={className}
-				{...otherProps}
+			<BaseContainer 
+				containment={containment} 
+				className={className} 
+				{...attributes}
 			>
-				{(builderBlock?.children || []).map((block) => {
-					return (
-						<BuilderBlockComponent key={block.id} block={block} />
-					);
-				})}
+				{children}
 			</BaseContainer>
 		);
-	},
+	}
 );
 
 export const builderContainerConfig: Component = {
 	name: "Container",
 	canHaveChildren: true,
-	defaultChildren: [],
+	defaultChildren: [
+		{ 
+		  '@type': '@builder.io/sdk:Element',
+		   component: { name: 'Text', options: { text: 'I am child text block!' } }
+		}
+	],
 	inputs: [
 		{
 			name: "containment",
